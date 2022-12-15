@@ -16,6 +16,7 @@ def FedIDSnet(x):
     """
 
     # Save input
+    x = tf.keras.layers.Reshape((-1,1))(x)
     shortcut = x
 
     # Define layer
@@ -48,6 +49,7 @@ def DeepFednet(x):
     """
 
     # Save input
+    x = tf.keras.layers.Reshape((-1,1))(x)
     shortcut = x
 
     # Define layer
