@@ -34,9 +34,13 @@ class FedAvgServer(FedServer):
         metric = copy.deepcopy(config['compile']['metric'])
         for i in range(len(metric)):
             if metric[i] == 'F1Score':
-                metric[i] = tfa.metrics.F1Score(num_classes=1, threshold=0.5)
+                metric[i] = tfa.metrics.F1Score(num_classes=config['n_classes'], threshold=0.5)
         
-        self.global_model = getattr(model, config['model'])(input_shape=config['feature_shape'], n_classes=1)
+        if getattr(model, config['model']) is not None:
+            self.global_model = getattr(model, config['model'])(input_shape=config['feature_shape'], n_classes=config['n_classes'])
+        else:
+            self.global_model = copy.deepcopy(config['model'])
+        
         self.compile_model(loss=config['compile']['loss'], metrics=metric)
         self.update_aggr_value(self.global_model.get_weights())
         self.update_fed_params(self.global_model.get_weights())
@@ -72,7 +76,7 @@ class FedAvgClient(FedClient):
         metric = copy.deepcopy(config['compile']['metric'])
         for i in range(len(metric)):
             if metric[i] == 'F1Score':
-                metric[i] = tfa.metrics.F1Score(num_classes=1, threshold=0.5)
+                metric[i] = tfa.metrics.F1Score(num_classes=config['n_classes'], threshold=0.5)
 
         if config['compile']['optim'] == 'SGD':
             optim = tf.keras.optimizers.SGD(learning_rate=config['compile']['lr'])
@@ -80,7 +84,10 @@ class FedAvgClient(FedClient):
             optim = tf.keras.optimizers.Adam(learning_rate=config['compile']['lr'])
         else:
             optim = None
-        self.local_model = getattr(model, config['model'])(input_shape=config['feature_shape'], n_classes=1)
+        if getattr(model, config['model']) is not None:
+            self.local_model = getattr(model, config['model'])(input_shape=config['feature_shape'], n_classes=config['n_classes'])
+        else:
+            self.local_model = copy.deepcopy(config['model'])
         self.compile_model(optim, config['compile']['loss'], metric)
 
     def update(self, new_values):

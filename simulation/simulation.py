@@ -9,7 +9,7 @@ import numpy as np
 import copy
 
 @track
-def fedsimulator(config_dir, fed_model=None, client_data=None, test_data=None):
+def fedsimulator(config_dir, fed_model=None, keras_model=None, client_data=None, test_data=None):
     with open(config_dir) as f:
         config = yaml.load(f, Loader=SafeLoader)
 
@@ -23,11 +23,18 @@ def fedsimulator(config_dir, fed_model=None, client_data=None, test_data=None):
         test_data, client_data = nfv1_pipe(config['dataset']['paths'])
     
     FEATURE_SHAPE = test_data[0].shape[1:]
+    N_CLASSES = test_data[1].shape[-1]
 
     mode = config["mode"]
     verbose = config["verbose"]
     config["server"]["feature_shape"] = FEATURE_SHAPE
     config["client"]["feature_shape"] = FEATURE_SHAPE
+    config["server"]["n_classes"] = N_CLASSES
+    config["client"]["n_classes"] = N_CLASSES
+
+    if keras_model is not None:
+        config["server"]["model"] = keras_model
+        config["client"]["model"] = keras_model
 
     print(f'Federated learning mode: {mode}')
     print(f"Server setting: {config['server']}")
