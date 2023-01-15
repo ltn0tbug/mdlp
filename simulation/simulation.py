@@ -1,6 +1,4 @@
 from utils import track
-from mdlp.data.pipe_collection import nfv1
-from mdlp.data.pipe_collection import fed as fed_pipe
 import tensorflow as tf
 from mdlp import fed
 import yaml
@@ -9,19 +7,11 @@ import numpy as np
 import copy
 
 @track
-def fedsimulator(config_dir, fed_model=None, keras_model=None, client_data=None, test_data=None):
+def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model=None):
     with open(config_dir) as f:
         config = yaml.load(f, Loader=SafeLoader)
 
-    NUM_CLIENTS = config['server']['n_client']
-    TEST_SIZE = config['dataset']['test_size']
-
-    if client_data is None or test_data is None:
-        nfv1_pipe = nfv1.get_pipe()
-        additional_pipe = fed_pipe.get_pipe(source_type = "No_Source", test_size=TEST_SIZE, n_clients=NUM_CLIENTS, split_attribute='Label')
-        nfv1_pipe.add_pipe(additional_pipe)
-        test_data, client_data = nfv1_pipe(config['dataset']['paths'])
-    
+    NUM_CLIENTS = config['server']['n_clients']
     FEATURE_SHAPE = test_data[0].shape[1:]
     N_CLASSES = test_data[1].shape[-1]
 
