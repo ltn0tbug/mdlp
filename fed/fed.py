@@ -34,13 +34,12 @@ class FedServer:
 
     def update_aggr_value(self, new_value):
         self.aggr_value = new_value
-    
+
     def get_fed_params(self):
         return self.fed_params
 
     def update_fed_params(self, new_params):
         self.fed_params = new_params
-
 
     def reinitialize_model_weight(self):
         import keras.backend as K
@@ -82,13 +81,13 @@ class FedClient:
 
     def compile_model(self, *args, **kwargs):
         self.local_model.compile(*args, *kwargs)
-    
+
     def update_model_weights(self, new_weights):
         self.local_model.set_weights(new_weights)
-    
+
     def save_model(self, save_path):
         self.local_model.save(save_path)
-    
+
     def save_model_weight(self, save_path):
         self.local_model.save_weights(save_path)
 
@@ -100,13 +99,13 @@ class FedClient:
 
     def update_aggr_value(self, new_value):
         self.aggr_value = new_value
-    
+
     def get_fed_params(self):
         return self.fed_params
 
     def update_fed_params(self, new_params):
         self.fed_params = new_params
-        
+
     def retrieve_fed_params(self):
         pass
 
@@ -149,4 +148,3 @@ class Identity:
 
     def get_id(self):
         return self.id_
-

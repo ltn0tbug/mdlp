@@ -3,7 +3,7 @@ from .subnet import conv1d_bn_mp
 
 
 def FedIDSnet(x):
-    """ Create FedIDSnet instance.
+    """Create FedIDSnet instance.
 
     # Arguments
         x: input tensor.
@@ -16,7 +16,7 @@ def FedIDSnet(x):
     """
 
     # Save input
-    x = tf.keras.layers.Reshape((-1,1))(x)
+    x = tf.keras.layers.Reshape((-1, 1))(x)
     shortcut = x
 
     # Define layer
@@ -35,8 +35,9 @@ def FedIDSnet(x):
 
     return x
 
+
 def DeepFednet(x):
-    """ Create DeepFednet instance.
+    """Create DeepFednet instance.
 
     # Arguments
         x: input tensor.
@@ -49,7 +50,7 @@ def DeepFednet(x):
     """
 
     # Save input
-    x = tf.keras.layers.Reshape((-1,1))(x)
+    x = tf.keras.layers.Reshape((-1, 1))(x)
     shortcut = x
 
     # Define layer

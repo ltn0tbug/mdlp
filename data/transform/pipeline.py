@@ -21,6 +21,7 @@ class FromDataFrame:
     def __call__(self, source):
         return source
 
+
 # def FromCSV(*args, **kwargs):
 #     def call(source):
 #         return pd.read_csv(source, *args, **kwargs)
@@ -95,7 +96,8 @@ class TranformValue:
     def __call__(self, source):
         for col_name, cond in self.condition.items():
             source[col_name] = source[col_name].transform(
-                cond, *self.args, **self.kwargs)
+                cond, *self.args, **self.kwargs
+            )
         return source
 
 
@@ -172,7 +174,13 @@ class OneHotSource:
 
     def __call__(self, source):
         onehot = OneHotEncoder(sparse=False)
-        source_encode = onehot.fit_transform(source[[self.attribute, ]])
+        source_encode = onehot.fit_transform(
+            source[
+                [
+                    self.attribute,
+                ]
+            ]
+        )
         return source_encode
 
 
@@ -188,21 +196,29 @@ class BalanceData:
         ll = [len(x) for x in ts]
         midx = ll.index(min(ll))
         split_size = ll[midx]
-        new_source = [ts[i] if i == midx else ts[i].sample(
-            n=split_size, random_state=self.random_state) for i in range(len(ts))]
+        new_source = [
+            ts[i]
+            if i == midx
+            else ts[i].sample(n=split_size, random_state=self.random_state)
+            for i in range(len(ts))
+        ]
         new_source = pd.concat(new_source)
         if self.shuffle:
-            return new_source.sample(frac=1, random_state=self.random_state).reset_index(drop=True)
+            return new_source.sample(
+                frac=1, random_state=self.random_state
+            ).reset_index(drop=True)
         return new_source
 
 
-class ConcatColumn():
+class ConcatColumn:
     def __call__(self, source):
         return df.concat(source, axis=1)
 
 
 class GenerateDataSet:
-    def __init__(self, shuffle_size=None, batch_size=None, repeat_count=None, *args, **kwargs):
+    def __init__(
+        self, shuffle_size=None, batch_size=None, repeat_count=None, *args, **kwargs
+    ):
         self.kwargs = kwargs
         self.shuffle_size = shuffle_size
         self.batch_size = batch_size
@@ -217,12 +233,14 @@ class GenerateDataSet:
             dataset = dataset.shuffle(self.shuffle_size)
 
         if self.batch_size is not None:
-            drmd = self.kwargs.get('drop_remainder', False)
+            drmd = self.kwargs.get("drop_remainder", False)
             dataset = dataset.batch(self.batch_size, drop_remainder=drmd)
 
 
 class SplitDataWithRatio:
-    def __init__(self, ratio=0.5, shuffle=True, balanced_attribute=None, random_state=None):
+    def __init__(
+        self, ratio=0.5, shuffle=True, balanced_attribute=None, random_state=None
+    ):
         self.ratio = ratio
         self.shuffle = True
         self.balanced_attribute = balanced_attribute
@@ -235,26 +253,42 @@ class SplitDataWithRatio:
             first_source = []
             second_source = []
             for df in ts:
-                first_source.append(df.sample(
-                    frac=self.ratio, random_state=self.random_state))
+                first_source.append(
+                    df.sample(frac=self.ratio, random_state=self.random_state)
+                )
                 second_source.append(df.drop(first_source[-1].index))
             first_source = pd.concat(first_source)
             second_source = pd.concat(second_source)
             if self.shuffle:
-                return [first_source.sample(frac=1, random_state=self.random_state).reset_index(drop=True), second_source.sample(frac=1, random_state=self.random_state).reset_index(drop=True)]
-            return [first_source.reset_index(drop=True), second_source.reset_index(drop=True)]
+                return [
+                    first_source.sample(
+                        frac=1, random_state=self.random_state
+                    ).reset_index(drop=True),
+                    second_source.sample(
+                        frac=1, random_state=self.random_state
+                    ).reset_index(drop=True),
+                ]
+            return [
+                first_source.reset_index(drop=True),
+                second_source.reset_index(drop=True),
+            ]
         else:
             if self.shuffle:
-                first_source = source.sample(frac=self.ratio, random_state=self.random_state)
+                first_source = source.sample(
+                    frac=self.ratio, random_state=self.random_state
+                )
             else:
-                first_source = source.iloc[:int(len(source)*self.ratio)]
+                first_source = source.iloc[: int(len(source) * self.ratio)]
 
             second_source = source.drop(first_source.index)
-            return [first_source.reset_index(drop=True), second_source.reset_index(drop=True)]
+            return [
+                first_source.reset_index(drop=True),
+                second_source.reset_index(drop=True),
+            ]
 
 
 class SplitDataWithN:
-    def __init__(self, n, shuffle=True,  balanced_attribute=None, random_state=None):
+    def __init__(self, n, shuffle=True, balanced_attribute=None, random_state=None):
         self.n = n
         self.shuffle = shuffle
         self.balanced_attribute = balanced_attribute
@@ -266,33 +300,43 @@ class SplitDataWithN:
             sgb = source.groupby(self.balanced_attribute)
             ts = [sgb.get_group(x) for x in sgb.groups]
             for df in ts:
-                split_size = int(len(df)/self.n)
+                split_size = int(len(df) / self.n)
                 for i in range(self.n):
-                    source_n[i].append(df.sample(n=split_size, random_state=self.random_state))
+                    source_n[i].append(
+                        df.sample(n=split_size, random_state=self.random_state)
+                    )
                     df.drop(source_n[i][-1].index)
 
             for i in range(self.n):
                 source_n[i] = pd.concat(source_n[i])
-            
+
             if self.shuffle:
-                return [s.sample(frac=1, random_state=self.random_state).reset_index(drop=True) for s in source_n]   
-            return [s.reset_index(drop=True) for s in source_n]   
+                return [
+                    s.sample(frac=1, random_state=self.random_state).reset_index(
+                        drop=True
+                    )
+                    for s in source_n
+                ]
+            return [s.reset_index(drop=True) for s in source_n]
         else:
             source_n = []
-            split_size = int(len(source)/self.n)
+            split_size = int(len(source) / self.n)
             if self.shuffle:
                 for i in range(self.n):
-                    source_n.append(source.sample(n=split_size, random_state=self.random_state))
+                    source_n.append(
+                        source.sample(n=split_size, random_state=self.random_state)
+                    )
                     source.drop(source_n[-1].index)
             else:
                 for i in range(self.n):
-                    source_n.append(source.iloc[i*split_size:(i+1)*split_size])
+                    source_n.append(source.iloc[i * split_size : (i + 1) * split_size])
             return [s.reset_index(drop=True) for s in source_n]
 
-class DropColumnWithAttribute():
+
+class DropColumnWithAttribute:
     def __init__(self, attribute):
         self.attribute = attribute
-    
+
     def __call__(self, source):
         return source.drop(self.attribute, axis=1)
 
@@ -308,14 +352,18 @@ class DataTranformPipeline:
             raise ValueError("Pipeline is empty.")
 
         first_pipe = self.pipe.pop(0)
-        first_pipe = first_pipe[0] if isinstance(first_pipe, list) and len(first_pipe)==1 else first_pipe
-        source = source[0] if isinstance(source, list) and len(source)==1 else source  
+        first_pipe = (
+            first_pipe[0]
+            if isinstance(first_pipe, list) and len(first_pipe) == 1
+            else first_pipe
+        )
+        source = source[0] if isinstance(source, list) and len(source) == 1 else source
         if self.verbose:
             x = self.execute_verbose(first_pipe, source)
         else:
             x = self.execute_pipe(first_pipe, source)
-        
-        x = x[0] if isinstance(x, list) and len(x)==1 else x   
+
+        x = x[0] if isinstance(x, list) and len(x) == 1 else x
         print("-" * 20)
 
         for p in self.pipe:
@@ -323,7 +371,7 @@ class DataTranformPipeline:
                 x = self.execute_verbose(p, x)
             else:
                 x = self.execute_pipe(p, x)
-            x = x[0] if isinstance(x, list) and len(x)==1 else x
+            x = x[0] if isinstance(x, list) and len(x) == 1 else x
             print("-" * 20)
 
         self.pipe.insert(0, first_pipe)
@@ -332,7 +380,7 @@ class DataTranformPipeline:
 
     def __str__(self):
         return str([list_pipe(p) for p in self.pipe])
-    
+
     def get_raw_pipe(self):
         return self.pipe
 
@@ -375,7 +423,14 @@ class DataTranformPipeline:
 
         end_time = time.time()
         elapsed = end_time - start_time
-        print("Elapsed_time: {0}".format(time.strftime("%H:%M:%S.{}".format(str(elapsed % 1)[2:])[:15], time.gmtime(elapsed))))
+        print(
+            "Elapsed_time: {0}".format(
+                time.strftime(
+                    "%H:%M:%S.{}".format(str(elapsed % 1)[2:])[:15],
+                    time.gmtime(elapsed),
+                )
+            )
+        )
 
         print("New source type: {}".format(list_type(x)))
         print("New source shape: {}".format(list_shape(x)))

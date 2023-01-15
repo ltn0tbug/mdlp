@@ -42,4 +42,3 @@ def list_pipe(pipe):
         pipe_type.append(list_pipe(p))
 
     return pipe_type
-

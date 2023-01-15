@@ -53,6 +53,7 @@ def FedIDSmodel(input_tensor=None, input_shape=None, n_classes=2):
     -   None
 """
 
+
 def DeepFedmodel(input_tensor=None, input_shape=None, n_classes=2, drop_out=0.2):
     """Create model with DeepFed network with `dropout` and `softmax` one prediction layer
 
@@ -60,7 +61,7 @@ def DeepFedmodel(input_tensor=None, input_shape=None, n_classes=2, drop_out=0.2)
         input_tensor: input tensor.
         input_shape: input shape of the input tensor. If `input_tensor` is set, the `input_shape` will be ignored.
         n_classes: the n_classes should be at least 2 (equal to 2 for anomaly prediction). the model will use the `softmax` activation for prediction layers (the loss function in this case should be like `categorical_crossentropy`).
-        drop_out: drop the value of prediction layer before activation layer. 
+        drop_out: drop the value of prediction layer before activation layer.
 
     # Returns
         Output a DeepFednet model.
@@ -79,13 +80,13 @@ def DeepFedmodel(input_tensor=None, input_shape=None, n_classes=2, drop_out=0.2)
         inputs = tf.keras.layers.Input(shape=input_shape)
     else:
         raise ValueError("Both `input_tensor` and `input_shape` are empty.")
-    
+
     if n_classes < 2:
         raise ValueError("`n_classes` must be equal to or greater than 2.")
 
     x = DeepFednet(inputs)
     x = tf.keras.layers.Dense(n_classes)(x)
-    x = tf.keras.layers.Dropout(drop_out,input_shape=(n_classes,))(x)
+    x = tf.keras.layers.Dropout(drop_out, input_shape=(n_classes,))(x)
     outputs = tf.keras.layers.Softmax()(x)
 
     return tf.keras.Model(inputs, outputs)

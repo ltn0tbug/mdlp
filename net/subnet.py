@@ -2,7 +2,7 @@ import tensorflow as tf
 
 
 def conv1d_bn_mp(x, filters, kernel_size, strides, padding, name=None):
-    """ Utility function to apply Conv1D, BatchNormalization, MaxPooling1D
+    """Utility function to apply Conv1D, BatchNormalization, MaxPooling1D
     # Arguments
         x: input tensor.
         filters: filters in `Conv1D`.
