@@ -17,9 +17,9 @@ class FedBase:
 
 
 class FedServer:
-    def __init__(self, global_model, **kwargs):
-        self.global_model = global_model
-        self.aggr_value = global_model.get_weights()
+    def __init__(self, *args, **kwargs):
+        self.fed_params = None
+        self.aggr_value = None
         init_client_identity = kwargs.get("init_client_identity", [])
         init_client_config = kwargs.get("init_client_config", [])
         self.client = (
@@ -34,6 +34,13 @@ class FedServer:
 
     def update_aggr_value(self, new_value):
         self.aggr_value = new_value
+    
+    def get_fed_params(self):
+        return self.fed_params
+
+    def update_fed_params(self, new_params):
+        self.fed_params = new_params
+
 
     def reinitialize_model_weight(self):
         import keras.backend as K
@@ -66,16 +73,18 @@ class FedServer:
 
 
 class FedClient:
-    def __init__(self, local_model, server_identity, **kwargs):
+    def __init__(self, local_model=None, server_identity=None, **kwargs):
         self.local_model = local_model
         self.server_identity = server_identity
         self.kwargs = kwargs
+        self.fed_params = None
+        self.aggr_value = None
 
-    def compile_model(self, model_config):
-        self.local_model.compile(**model_config)
+    def compile_model(self, *args, **kwargs):
+        self.local_model.compile(*args, *kwargs)
     
-    def update_model_weight(self, new_weight):
-        self.local_model.set_weights(new_weight)
+    def update_model_weights(self, new_weights):
+        self.local_model.set_weights(new_weights)
     
     def save_model(self, save_path):
         self.local_model.save(save_path)
@@ -83,20 +92,38 @@ class FedClient:
     def save_model_weight(self, save_path):
         self.local_model.save_weights(save_path)
 
+    def get_model_weights(self):
+        return self.local_model.get_weights()
+
+    def get_aggr_value(self):
+        return self.aggr_value
+
+    def update_aggr_value(self, new_value):
+        self.aggr_value = new_value
+    
     def get_fed_params(self):
+        return self.fed_params
+
+    def update_fed_params(self, new_params):
+        self.fed_params = new_params
+        
+    def retrieve_fed_params(self):
         pass
 
-    def get_global_config(self):
+    def retrieve_global_config(self):
+        pass
+
+    def get_local_params(self):
         pass
 
     def post_local_params(self):
         pass
 
-    def train(self, dataset, train_config):
-        self.local_model.fit(dataset, **train_config)
+    def train(self, dataset, *args, **kwargs):
+        self.local_model.fit(dataset, *args, **kwargs)
 
-    def evaluate(self, dataset):
-        self.local_model.evaluate(dataset)
+    def evaluate(self, X_test, y_test, *args, **kwargs):
+        self.local_model.evaluate(X_test, y_test, *args, **kwargs)
 
     def reinitialize_model(self):
         import keras.backend as K

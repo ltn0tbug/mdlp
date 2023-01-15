@@ -3,9 +3,6 @@ from mdlp.net import FedIDSnet, DeepFednet
 from mdlp.model.utils import classifier
 
 """
-    # Author
-    -   Nguyen Huu Quyen
-
     # Reference paper
     -   None
 
@@ -48,6 +45,14 @@ def FedIDSmodel(input_tensor=None, input_shape=None, n_classes=2):
     return tf.keras.Model(inputs, outputs)
 
 
+"""
+    # Reference paper
+    -   https://ieeexplore.ieee.org/document/9195012
+
+    # Reference Implementation
+    -   None
+"""
+
 def DeepFedmodel(input_tensor=None, input_shape=None, n_classes=2, drop_out=0.2):
     """Create model with DeepFed network with `dropout` and `softmax` one prediction layer
 
@@ -82,6 +87,5 @@ def DeepFedmodel(input_tensor=None, input_shape=None, n_classes=2, drop_out=0.2)
     x = tf.keras.layers.Dense(n_classes)(x)
     x = tf.keras.layers.Dropout(drop_out,input_shape=(n_classes,))(x)
     outputs = tf.keras.layers.Softmax()(x)
-    #outputs = classifier(x, 1, activation="sigmoid")
 
     return tf.keras.Model(inputs, outputs)

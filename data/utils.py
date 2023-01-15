@@ -16,36 +16,30 @@
 
 def list_type(source):
     if not isinstance(source, list):
-        return [
-            source.__class__.__name__,
-        ]
+        return source.__class__.__name__
     source_type = []
     for src in source:
-        source_type += list_type(src)
+        source_type.append(list_type(src))
 
     return source_type
 
 
 def list_shape(source):
     if not isinstance(source, list):
-        return [
-            source.shape if hasattr(source, "shape") else None,
-        ]
+        return source.shape if hasattr(source, "shape") else None
     source_shape = []
     for src in source:
-        source_shape += list_shape(src)
+        source_shape.append(list_shape(src))
 
     return source_shape
 
 
 def list_pipe(pipe):
     if not isinstance(pipe, list):
-        return [
-            pipe.__class__.__name__,
-        ]
+        return pipe.__class__.__name__
     pipe_type = []
     for p in pipe:
-        pipe_type += list_pipe(p)
+        pipe_type.append(list_pipe(p))
 
     return pipe_type
 
