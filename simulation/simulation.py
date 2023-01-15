@@ -12,8 +12,8 @@ def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model
         config = yaml.load(f, Loader=SafeLoader)
 
     NUM_CLIENTS = config['server']['n_clients']
-    FEATURE_SHAPE = test_data[0].shape[1:]
-    N_CLASSES = test_data[1].shape[-1]
+    FEATURE_SHAPE = config['dataset']['feature_shape']
+    N_CLASSES = config['dataset']['n_classes']
 
     mode = config["mode"]
     verbose = config["verbose"]
