@@ -9,8 +9,13 @@ import copy
 
 @track
 def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model=None):
+    simulation_return = {}
+
     with open(config_dir) as f:
         config = yaml.load(f, Loader=SafeLoader)
+    
+    if "evaluation_history" in config['simulation_return']:
+        simulation_return['evaluation_history'] = {}
 
     NUM_CLIENTS = config["server"]["n_clients"]
     FEATURE_SHAPE = config["dataset"]["feature_shape"]
@@ -66,5 +71,10 @@ def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model
         for c in range(len(clients)):
             client.update(server.get_fed_params())
         print("[s] Evaluation")
-        server.evaluate(*test_data, config=config["server"]["evaluate"])
+        evaluation_history = server.evaluate(*test_data, config=config["server"]["evaluate"])
+        if "evaluation_history" in config['simulation_return']:
+            simulation_return['evaluation_history'][f'round{r+1}'] = copy.deepcopy(evaluation_history)
         print(f"[o] Finish Round {r + 1}")
+    
+    simulation_return['aggregation_value'] = copy.deepcopy(server.get_aggr_value())
+    return simulation_return
