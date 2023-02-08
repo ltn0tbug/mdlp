@@ -76,5 +76,6 @@ def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model
             simulation_return['evaluation_history'][f'round{r+1}'] = copy.deepcopy(evaluation_history)
         print(f"[o] Finish Round {r + 1}")
     
-    simulation_return['aggregation_value'] = copy.deepcopy(server.get_aggr_value())
+    if 'fed_server' in config['simulation_return']:
+        simulation_return['fed_server'] = server
     return simulation_return
