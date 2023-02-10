@@ -94,10 +94,11 @@ class TranformValue:
         self.kwargs = kwargs
 
     def __call__(self, source):
-        for col_name, cond in self.condition.items():
-            source[col_name] = source[col_name].transform(
-                cond, *self.args, **self.kwargs
-            )
+        for col_name in source.columns:
+            if col_name in [*self.condition]:
+                source[col_name] = source[col_name].transform(
+                    self.condition[col_name], *self.args, **self.kwargs
+                )
         return source
 
 

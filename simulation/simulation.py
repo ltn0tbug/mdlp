@@ -21,6 +21,10 @@ def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model
     FEATURE_SHAPE = config["dataset"]["feature_shape"]
     N_CLASSES = config["dataset"]["n_classes"]
 
+    if FEATURE_SHAPE != test_data[0].shape[1:]:
+        print(f"[W] Input shape {test_data[0].shape} is different from config dataset shape {FEATURE_SHAPE}. Choose input shape {test_data[0].shape} for training.")
+        FEATURE_SHAPE = test_data[0].shape[1:]
+
     mode = config["mode"]
     verbose = config["verbose"]
     config["server"]["feature_shape"] = FEATURE_SHAPE

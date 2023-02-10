@@ -129,7 +129,7 @@ class FedAvgClient(FedClient):
                 .batch(batch_size)
             )
         self.update_ncd(len(X_train))
-        super().train(train_data, **config, **kwargs)
+        super().train(X_train, y_train, **config, **kwargs)
 
 
 class FedAvg:
