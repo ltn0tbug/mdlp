@@ -116,12 +116,16 @@ nclass_base_pipe_v2 = [
 ]
 
 
-def get_pipe(source_type="CSV", is_binary = True, verbose = True, test_size = None):
+def get_pipe(source_type="CSV", is_binary = True, verbose = True, test_size = None, transform = True):
     if is_binary:
         data_pipe = DataTranformPipeline(binary_base_pipe.copy(), verbose=verbose)
 
     else:
         data_pipe = DataTranformPipeline(nclass_base_pipe.copy(), verbose=verbose)
+    
+
+    if not transform:
+        data_pipe.pipe.pop()
 
     
     if source_type == "CSV":
@@ -172,7 +176,8 @@ def get_pipe_v1(source_type="CSV", is_binary=True, verbose=True, test_size=None)
 }
 """
 
-def get_pipe_v2(source_type="CSV", is_binary=True, verbose=True, test_size=None, include_ip = False):
+def get_pipe_v2(source_type="CSV", is_binary=True, verbose=True, test_size=None, transform  = True, include_ip = False):
+
     if is_binary:
         data_pipe = DataTranformPipeline(binary_base_pipe_v2.copy(), verbose=verbose)
         if include_ip:
@@ -181,6 +186,9 @@ def get_pipe_v2(source_type="CSV", is_binary=True, verbose=True, test_size=None,
         data_pipe = DataTranformPipeline(nclass_base_pipe_v2.copy(), verbose=verbose)
         if include_ip:
             data_pipe.pipe[1] = FilterColummn(FEATURE + ["Attack"])
+    
+    if not transform:
+        data_pipe.pipe.pop()
 
     if source_type == "CSV":
         data_pipe.pipe[0] = FromCSV()
