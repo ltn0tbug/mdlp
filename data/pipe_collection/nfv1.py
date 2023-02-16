@@ -173,14 +173,15 @@ def get_pipe_v1(source_type="CSV", is_binary=True, verbose=True, test_size=None)
 """
 
 def get_pipe_v2(source_type="CSV", is_binary=True, verbose=True, test_size=None, include_ip = False):
+    _FEATURE = FEATURE if include_ip else FEATURE_V2
+
     if is_binary:
         data_pipe = DataTranformPipeline(binary_base_pipe_v2.copy(), verbose=verbose)
-        if include_ip:
-            data_pipe.pipe[1] = FilterColummn(FEATURE + ["Label"])
+        data_pipe.pipe[1] = FilterColummn(_FEATURE + ["Label"])
+            
     else:
         data_pipe = DataTranformPipeline(nclass_base_pipe_v2.copy(), verbose=verbose)
-        if include_ip:
-            data_pipe.pipe[1] = FilterColummn(FEATURE + ["Attack"])
+        data_pipe.pipe[1] = FilterColummn(_FEATURE + ["Label"])
 
     if source_type == "CSV":
         data_pipe.pipe[0] = FromCSV()
@@ -193,7 +194,7 @@ def get_pipe_v2(source_type="CSV", is_binary=True, verbose=True, test_size=None,
         if is_binary:
             data_pipe.add_pipe(
                 [
-                    FilterColummn(FEATURE_V2),
+                    FilterColummn(_FEATURE),
                     FilterColummn(
                         [
                             "Label",
@@ -204,7 +205,7 @@ def get_pipe_v2(source_type="CSV", is_binary=True, verbose=True, test_size=None,
         else:
             data_pipe.add_pipe(
                 [
-                    FilterColummn(FEATURE_V2),
+                    FilterColummn(_FEATURE),
                     FilterColummn(
                         [
                             "Attack",

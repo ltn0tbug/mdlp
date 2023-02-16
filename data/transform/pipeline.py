@@ -5,6 +5,7 @@ from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 import os
 import time
+import struct
 from mdlp.data.utils import list_type, list_shape, list_pipe
 
 
@@ -340,6 +341,23 @@ class DropColumnWithAttribute:
 
     def __call__(self, source):
         return source.drop(self.attribute, axis=1)
+
+class GraphTransform:
+    def __call__(self, source):
+        source["IPV4_SRC_ADDR"] = source.IPV4_SRC_ADDR.apply(lambda _: socket.inet_ntoa(
+        struct.pack(">I", random.randint(0xac100001, 0xac1f0001))))
+
+        source["IPV4_SRC_ADDR"] = source.IPV4_SRC_ADDR.apply(str)
+        source["L4_SRC_PORT"] = source.L4_SRC_PORT.apply(str)
+        source["IPV4_DST_ADDR"] = source.IPV4_DST_ADDR.apply(str)
+        source["L4_DST_PORT"] = source.L4_DST_PORT.apply(str)
+
+        source["IPV4_SRC_ADDR"] = source["IPV4_SRC_ADDR"] + ":" + source["L4_SRC_PORT"]
+        source["IPV4_DST_ADDR"] = source["IPV4_DST_ADDR"] + ":" + source["L4_DST_PORT"]
+
+        source = source.drop(columns=["L4_SRC_PORT", "L4_DST_PORT"])
+        return source
+        
 
 
 class DataTranformPipeline:
