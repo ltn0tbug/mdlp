@@ -6,6 +6,8 @@ import numpy as np
 import os
 import time
 import struct
+import socket
+import random
 from mdlp.data.utils import list_type, list_shape, list_pipe
 
 
@@ -342,7 +344,7 @@ class DropColumnWithAttribute:
     def __call__(self, source):
         return source.drop(self.attribute, axis=1)
 
-class GraphTransform:
+class GraphTransForm:
     def __call__(self, source):
         source["IPV4_SRC_ADDR"] = source.IPV4_SRC_ADDR.apply(lambda _: socket.inet_ntoa(
         struct.pack(">I", random.randint(0xac100001, 0xac1f0001))))
