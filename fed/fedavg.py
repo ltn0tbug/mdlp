@@ -34,7 +34,7 @@ class FedAvgServer(FedServer):
         for i in range(len(metric)):
             if metric[i] == "F1Score":
                 metric[i] = tfa.metrics.F1Score(
-                    num_classes=config["n_classes"], threshold=0.5
+                    num_classes=config["n_classes"] if config["n_classes"]>2 else 2, threshold=0.5
                 )
 
         if getattr(model, config["model"]) is not None:
