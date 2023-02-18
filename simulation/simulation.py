@@ -56,9 +56,9 @@ def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model
     clients = [fed_base.client() for _ in range(NUM_CLIENTS)]
     server.initialize(config["server"])
     for c in range(NUM_CLIENTS):
-        client[c].initialize(config["client"])
+        clients[c].initialize(config["client"])
         fed_params = copy.deepcopy(server.get_fed_params())
-        client[c].update(fed_params)
+        clients[c].update(fed_params)
 
     print("Done!!!")
     print("Start Simulation")
@@ -73,7 +73,7 @@ def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model
         server.update(config["server"], clients)
         print("[s] Update client weights")
         for c in range(NUM_CLIENTS):
-            client[c].update(server.get_fed_params())
+            clients[c].update(server.get_fed_params())
         print("[s] Evaluation")
         evaluation_history = server.evaluate(*test_data, config=config["server"]["evaluate"])
         if "evaluation_history" in config['simulation_return']:
