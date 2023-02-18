@@ -72,8 +72,8 @@ def fedsimulator(config_dir, test_data, client_data, fed_model=None, keras_model
         print("[s] calculate aggregate value")
         server.update(config["server"], clients)
         print("[s] Update client weights")
-        for c in range(len(clients)):
-            client.update(server.get_fed_params())
+        for c in range(NUM_CLIENTS):
+            client[c].update(server.get_fed_params())
         print("[s] Evaluation")
         evaluation_history = server.evaluate(*test_data, config=config["server"]["evaluate"])
         if "evaluation_history" in config['simulation_return']:
