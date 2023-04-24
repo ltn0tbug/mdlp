@@ -309,7 +309,7 @@ class SplitDataWithN:
                     source_n[i].append(
                         ts[ts_idx].sample(n=split_size, random_state=self.random_state)
                     )
-                    ts[ts_idx].drop(source_n[i][-1].index, inplace=True)
+                    ts[ts_idx] = ts[ts_idx].drop(source_n[i][-1].index)
 
             for i in range(self.n):
                 source_n[i] = pd.concat(source_n[i])
