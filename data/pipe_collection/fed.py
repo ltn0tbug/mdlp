@@ -19,8 +19,8 @@ def get_pipe(
         raise ValueError("`source_type` must be in ['CSV', 'DataFrame', 'No_Source']")
 
     if test_size is not None:
-        raw_pipe.append(SplitDataWithRatio(test_size, split_attribute))
-        raw_pipe.append([None, SplitDataWithN(n_clients, split_attribute)])
+        raw_pipe.append(SplitDataWithRatio(test_size, balanced_attribute = split_attribute))
+        raw_pipe.append([None, SplitDataWithN(n_clients, balanced_attribute = split_attribute)])
         raw_pipe.append(
             [
                 [
@@ -44,7 +44,7 @@ def get_pipe(
                 ]
             )
     else:
-        raw_pipe.append(SplitDataWithN(n_clients, split_attribute))
+        raw_pipe.append(SplitDataWithN(n_clients, balanced_attribute = split_attribute))
         raw_pipe.append(
             [
                 [
