@@ -303,13 +303,13 @@ class SplitDataWithN:
             source_n = [[] for _ in range(self.n)]
             sgb = source.groupby(self.balanced_attribute)
             ts = [sgb.get_group(x) for x in sgb.groups]
-            for df in ts:
-                split_size = int(len(df) / self.n)
+            for ts_idx in ts:
+                split_size = int(len(ts[ts_idx]) / self.n)
                 for i in range(self.n):
                     source_n[i].append(
-                        df.sample(n=split_size, random_state=self.random_state)
+                        ts[ts_idx].sample(n=split_size, random_state=self.random_state)
                     )
-                    df.drop(source_n[i][-1].index)
+                    ts[ts_idx].drop(source_n[i][-1].index, inplace=True)
 
             for i in range(self.n):
                 source_n[i] = pd.concat(source_n[i])
